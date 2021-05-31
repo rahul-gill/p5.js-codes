@@ -1,6 +1,7 @@
 let cwnd = 1;
 let ssthresh = 64;
 let threeACKs = false, timeout = false;
+let dupACKs = 0;
 let state = 0;
 let t = 0;
 let prevx=0,prevy=0;
@@ -10,15 +11,17 @@ function setup(){
     createCanvas(1366,768);
     noLoop();
     background(0);
-    buttA = createButton('threeACKs');
+    buttA = createButton('recvDupACK');
     buttB = createButton('timeout');
     buttA.position(50,530);
     buttB.position(150,530);
-    buttA.mousePressed(applyThreeACKs);
+    buttA.mousePressed(applyDupACK);
     buttB.mousePressed(applyTimeout);
 }  
 
 function draw() {
+    if(dupACKs >= 3){ threeACKs = true; }
+
     (state == 0) ? slowStart() : (state == 1 ? CongestionAvoidance(): FastRecovery());
     fill(0);stroke(0);
     rect(240,520,170,40);
@@ -77,6 +80,7 @@ function CongestionAvoidance(){
     }else{
         cwnd = ssthresh;
         threeACKs = false;timeout = false;
+        dupACKs = 0;
     }
 }
 
@@ -93,6 +97,7 @@ function FastRecovery(){
     }
     else{
         cwnd++;
+        dupACKs = 0;
     }
     threeACKs = false;timeout = false;
 }
@@ -101,7 +106,7 @@ function mousePressed(){
     redraw();
 }
 
-function applyThreeACKs(){ threeACKs = true; }
+function applyDupACK(){ dupACKs++; }
 function applyTimeout(){ timeout = true; }
 /**
  * events:  three ACKs
