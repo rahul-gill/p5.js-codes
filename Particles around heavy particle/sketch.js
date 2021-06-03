@@ -1,6 +1,7 @@
 let TRAIL_SIZE = 5, PARTICLES = 160;
 let G = 0.0001;
 let trail_size_slider, particle_slider;
+let resetButton;
 class Particle{
 	/**
 	 * particle position = (this.x, this.y)
@@ -20,6 +21,8 @@ class Particle{
 		this.m = m;
 		this.trailx = [];
 		this.traily = [];
+		this.ax = 0;
+		this.ay = 0;
 	}
 	force(particle){
 		/**
@@ -59,7 +62,9 @@ let p1 = new Particle(650,300,0,0,80000);//the star particle
 function setup(){
 	createCanvas(1300,620);
  	frameRate(60);
- 	
+ 	resetButton = createButton('reset');
+	resetButton.mousePressed(resetter);
+	resetButton.position(10,30);
 	trail_size_slider = createSlider(1,20,0);
 	trail_size_slider.position(10,10);
 	trail_size_slider.style('width', '80px');
@@ -77,14 +82,17 @@ function draw(){
 	background(0);
 	fill(100);
 	rect(0,0,100,100);
+	strokeWeight(0);fill(255);
+	text('click to add',10,70);
+	text('particle there.',10,90);
 	TRAIL_SIZE = trail_size_slider.value();
 	/*forces*/
-	for(let i=p.length-PARTICLES;i<p.length;i++){
+	for(let i=0;i<p.length;i++){
  		p1.force(p[i]);
  		p[i].force(p1);
 	}
-	for(let i=p.length-PARTICLES;i<p.length;i++){
- 		for(let j=p.length-PARTICLES;j<p.length;j++){
+	for(let i=0;i<p.length;i++){
+ 		for(let j=0;j<p.length;j++){
  			if(i != j){
  				p[i].force(p[j]);
  				p[j].force(p[i]);
@@ -96,7 +104,7 @@ function draw(){
 	p1.show();
 	fill(255);
 	const scl = 255/50;
-	for(let i=p.length-PARTICLES;i<p.length;i++){
+	for(let i=0;i<p.length;i++){
 		let tint;
 		if(i<25){tint = i*scl;}
 		else{tint = (50-i)*scl;}
@@ -109,10 +117,17 @@ function draw(){
 
 function mousePressed(){
 	if(mouseX > 100 && mouseY>100){
-		let speedx,speedy;
-		if(mouseX >= p1.x ){ speedx = -2;}
-		else{ speedx = 2;}
+		let speedx=0;
+		if(mouseX >= p1.x ){ speedx = -1;}
+		else{ speedx = 1;}
 		let temp = new Particle(mouseX,mouseY,speedx,0,1);
 		p.push(temp);
 	}
+}
+
+function resetter(){
+	p = [];
+	p1.x = 650;
+	p1.y = 300;
+	p1.vx=0;p1.vy=0;p1.ax=0;p1.ay=0;
 }

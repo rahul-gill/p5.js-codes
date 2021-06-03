@@ -70,12 +70,10 @@ function CongestionAvoidance(){
             tmpCounter = 0;
             cwnd++;
         }
-       console.log("calse1");
     }else if(timeout){
         ssthresh = cwnd/2;
         cwnd = 1;
         state = 0;
-        print("done and state",state);
         threeACKs = false;timeout = false;
     }else{
         cwnd = ssthresh;
