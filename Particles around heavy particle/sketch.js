@@ -61,18 +61,14 @@ let p = [];//array for other particles
 let p1 = new Particle(650,300,0,0,80000);//the star particle
 function setup(){
 	createCanvas(1300,620);
- 	frameRate(60);
+ 	frameRate(30);
  	resetButton = createButton('reset');
 	resetButton.mousePressed(resetter);
 	resetButton.position(10,30);
 	trail_size_slider = createSlider(1,20,0);
 	trail_size_slider.position(10,10);
 	trail_size_slider.style('width', '80px');
- 	/*for(let i=0;i<60;i++){
- 		let temp = new Particle(500,500,0,0.3,1);
-		p.push(temp);
- 	}*/
- 	for(let i=0;i<160;i++){
+ 	for(let i=0;i<100;i++){
  		let temp = new Particle(500,200,0,-0.2,1);
 		p.push(temp);
  	}
@@ -122,6 +118,12 @@ function mousePressed(){
 		else{ speedx = 1;}
 		let temp = new Particle(mouseX,mouseY,speedx,0,1);
 		p.push(temp);
+
+	for(let i=0; i<p.length; i++){
+		console.log(p[i].vx,p[i].y);
+	}
+
+	console.log("\n\n");
 	}
 }
 

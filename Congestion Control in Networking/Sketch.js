@@ -7,6 +7,7 @@ let t = 0;
 let prevx=0,prevy=0;
 let buttA, buttB;
 let mss = 10,tmpCounter=0;
+
 function setup(){
     createCanvas(1366,768);
     noLoop();
@@ -106,38 +107,3 @@ function mousePressed(){
 
 function applyDupACK(){ dupACKs++; }
 function applyTimeout(){ timeout = true; }
-/**
- * events:  three ACKs
- *          timeout
- * states:  slow start
- *          congestion avoidance
- *          fast recovery
- * vars:    cwnd,ssthresh,mss,t(which is ACK number)
- */
-
-/**
- * three ACKs:  
- *      take TCP segments with numbers 0 1 2 3 4 5 6 7 8 9 10
- *      if sending these one by one, and segment 2 get lost, then next segments will give ACK no 1 because receiver is expecting
- *      segment 2 which has not arrived yet.The ACK numbers received by sender are 0 1 1 1
- *      now three duplicate ACKs arrived and sender knows segment 2 get lost(google why three duplicates and not two)
- * timeout:
- *      happens when sender has waited enough for ACK. Denotes more serious congestion than three ACKs
- * 
- * MSS: max segment size(precisely its number of bytes application layer pass to TCP)
- * CWND: congestion window(number of packets that can be sent, avoiding congestion)
- * SSTHRESH: slow start threshold(equal to half of CWND when timeout or threeACKs occured in slow start mode)
- * 
- * SlowStart:
- *      if(no threeACKs or timeout && CWND < SSTHRESH): exponentially increase congestion window(double each time like 1 2 4 8 16)
- *      if(no threeACKs or timeout && CWND >= SSTHRESH):SSTHRESH = CWND/2;switch mode to CongestionAvoidance 
- *      if(timeout): set congestion window to 1MSS
- *      if(threeACKs): SSTHRESH = current CWND/2;CWND = SSTHRESH;switch mode to FastRecovery
- * CongestionAvoidance:
- *      if(no threeACKs or timeout): increase CWND every CWND/MSS received ACKs
- *      if(timeout): SSTHRESH = current CWND/2;CWND = 1; switch to SlowStart
- * FastRecovery:
- *      if(threeACKs): CWND++;
- *      if(no threeACKs or timeout): switch to CongestionAvoidance
- *      if(timeout):  SSTHRESH = current CWND/2;CWND = 1; switch to SlowStart
- */
