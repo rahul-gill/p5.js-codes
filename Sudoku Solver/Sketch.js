@@ -27,7 +27,7 @@ function setup(){
     createCanvas(300,400);
     frameRate(60);
     background(0);
-    sldr = createSlider(2,60,2);
+    sldr = createSlider(1,60,1);
     sldr.position(10,10);
     chkbox = createCheckbox("",false);
     chkbox.changed(myCheckedEvent);
@@ -42,7 +42,7 @@ function setup(){
 }
 
 function draw(){
-    strokeWeight(1);
+    strokeWeight(1);stroke(0);
     text("<-fast mode",40,60);
     if(!fastmode){
         let val = sldr.value();
@@ -51,14 +51,12 @@ function draw(){
     }
     else{
         frameRate(60);
-        drawGrid();solve();
-        drawGrid();solve();
-        drawGrid();solve();
-        drawGrid();solve();
-        drawGrid();solve();
-        drawGrid();solve();
+        for(let i=0;i<9;i++){
+            solve();
+        }
+        drawGrid();
     } 
-    strokeWeight(3);
+    strokeWeight(3);stroke(0);
     line(offx+90,offy,offx+90,offy+270);
     line(offx+180,offy,offx+180,offy+270);
     line(offx,offy+90,offx+270,offy+90);
@@ -69,7 +67,9 @@ function drawGrid(){
     for(let i=0;i<9;i++){
         for(let j=0;j<9;j++){
 
-            stroke(0);fill(255);
+            stroke(0);
+            if(blocked[i][j]){ fill(255,255,100); }
+            else{ fill(255); }
             rect(offx+i*30,offy+j*30,30,30);
             if(grid[i][j] > 0){
                 fill(0);noStroke();
@@ -98,7 +98,7 @@ function boxCheck(r,c){
     let blockx = floor(r/3), blocky = floor(c/3);
     for(let i=blockx*3; i<blockx*3+3; i++){
         for(let j=blocky*3; j<blocky*3+3; j++){
-            if(i!=r && j!=c && grid[i][j] !=0 && grid[i][j] === grid[r][c]){return i;}           
+            if(i!=r && j!=c && grid[i][j] !=0 && grid[i][j] === grid[r][c]){return i+j*10;}           
         }
     }
     return -1;
@@ -106,8 +106,10 @@ function boxCheck(r,c){
 
 
 function solve(){
+    if(statex == 9 && statey == 0) return;
     if(blocked[statex][statey] === 1){
-        console.log("a",statex,statey);
+        noFill();stroke(0);strokeWeight(2);
+        circle(offx+statex*30+15,offy+statey*30+15,30);
         if(!backtrack){
             if(statey<9){ statey++; }
             else if(statex<9){ statex++;statey=0;}
@@ -119,16 +121,27 @@ function solve(){
         return;
     }
     if(grid[statex][statey] <9){
-        console.log("b",statex,statey);
         backtrack = false;
         grid[statex][statey]++;
+        drawGrid();
         let rc = rowCheck(statex,statey);
         let cc = colCheck(statex,statey);
         let bc = boxCheck(statex, statey);
+
+        noFill();stroke(0);strokeWeight(2);
+        circle(offx+statex*30+15,offy+statey*30+15,30);
+        stroke(255,0,0);
+        if(rc != -1){
+            circle(offx+statex*30+15,offy+rc*30+15,30);
+        }else if(cc != -1){
+            circle(offx+cc*30+15,offy+statey*30+15,30);
+        }else if(bc != -1){
+            circle(offx+(bc%10)*30+15,offy+floor(bc/10)*30+15,30);
+        }
+
         if(rc === -1 && cc === -1 && bc === -1){
             if(statey<9){ statey++; }
             else if(statex<9){ statex++;statey=0; }
-            drawGrid();
         }else if(grid[statex][statey] === 9){
             grid[statex][statey] = 0;
             backtrack = true;
@@ -136,7 +149,6 @@ function solve(){
             else{statey--;}
         }
     }else if(grid[statex][statey] === 9 && !(statey==0 && statex==0)){
-        console.log("c",statex,statey);
         grid[statex][statey] = 0;
         baktrack = true;
         if(statey===0){statex--;statey=9;}
