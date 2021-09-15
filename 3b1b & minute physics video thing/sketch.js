@@ -11,7 +11,14 @@ function draw() {
   background(0);
   translate(OFFX,OFFY);
 
-  if(rot>=-Math.PI/2){ rot -= 0.02; }
+  if(rot > -Math.PI/2)
+  {
+    rot -= 0.02;
+  }
+  if(rot < -Math.PI *2){ rot += Math.PI * 2; }
+ 
+  fill(0,0,0,0);stroke(255,0,0);
+  circle(0,0,a*2);
 
 	fill(255,0,0);
 	circle(150,0,10);
@@ -26,6 +33,9 @@ function draw() {
 		translate(midPoint.x, midPoint.y);
 
     rotate(rot);
+    fill(255,0,0);stroke(255,0,0);
+    circle(0,0,1);
+
 		stroke(255);
     line((pointOnEllipse.x - midPoint.x), (pointOnEllipse.y - midPoint.y), focus.x - midPoint.x, focus.y - midPoint.y);
     pop();
