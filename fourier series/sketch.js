@@ -118,7 +118,7 @@ function draw() {
     if (wave.length > 300)
         wave.pop()
 
-    time +=0.07
+    time +=0.1
 }
 
 
