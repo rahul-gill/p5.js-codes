@@ -18,7 +18,7 @@ let period, omega;
 let max_harmonic = 20;
 let fourier_vals_array = new Array(100)
 function compute_coeffs(f){
-    let Ndt = (10*max_harmonic > 100) ? 10*max_harmonic : 100;
+    let Ndt = 10 * max_harmonic;
     if(Ndt > 3000){ Ndt = 3000 }
     let factor = 2.0 / period;
     for(let i=1; i<=100 ;i++){
@@ -43,12 +43,15 @@ let time = 0
 let wave = [] // stores points that we've drawn
 let slider
 let drawWaveSwitch = 1, circleSwitch = 255
-
+let dt
 function setup() {
     createCanvas(1360, 600)
     slider = createSlider(1, 100,100)
     slider.position(150,2)
     slider.style('width','400px')
+    slider2 = createSlider(0.001, 0.05, 0.05, 0.001)
+    slider2.position(800,2)
+    slider2.style('width','200px')
     button = createButton("sawtooth/square")
     button.position(1,1);
     button.mousePressed(changeWave)
@@ -79,14 +82,15 @@ function sawTooth(t){
 
 function draw() {
     max_harmonic = slider.value()
+    dt = slider2.value()
     background(0)
-    translate(width/3, height/2)
+    translate(width/2.7, height/2)
     stroke(255)
     noFill()
 
     let x = 0, y = 0, prevPos
 
-    for (let i=1; i<=slider.value(); i++) {
+    for (let i=1; i<=max_harmonic; i++) {
         prevPos = new p5.Vector(x, y)
         let fourier_vals = get_coeffs(i)
         x += fourier_vals.x
@@ -97,16 +101,15 @@ function draw() {
         circle(prevPos.x, prevPos.y, fourier_vals.r*2)
 
     }
-
     wave.unshift(y)
     let offsetX = 500
     translate(offsetX, 0)
-    stroke(255)
+    stroke(255, 0, 255)
     line(x-offsetX, y, 0, wave[0])
     strokeWeight(10)
     stroke(255,100);
     point(0, wave[0])
-
+    
     stroke(255,0,0)
     strokeWeight(1)
     beginShape()
@@ -118,7 +121,7 @@ function draw() {
     if (wave.length > 300)
         wave.pop()
 
-    time +=0.02
+    time += dt
 }
 
 
